@@ -1,0 +1,9 @@
+Features:
+		*Passsword protected and HTTPS
+		*Time limit for submitting clicks for current number; can't submit clicks for previous numbers
+		*Client can choose how many cards they want; they can have multiple cards
+		*Cards are auto-generated
+		*Database has: username, password(hash), #wins, #losses, current money
+		*Money in the pool is managed correctly if someone logs out in the middle of a game
+		*Leaderboard page
+		*Rules are implemented including lines, corners, squares, etc.
