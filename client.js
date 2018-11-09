@@ -1,7 +1,12 @@
-window.onload = initAll;
+/*window.onload = initAll;*/
 var usedNums = new Array(76);
 
 function initAll() {
+    $("#form").submit(function(event){
+        $("#Login").hide();
+        $("#MainPage").show();
+        event.preventDefault();
+    });
      if (document.getElementById) {
         document.getElementById("reload"). onclick = anotherCard;
         newCard();
@@ -44,3 +49,4 @@ function anotherCard() {
      return false;
 }
 
+$(initAll);

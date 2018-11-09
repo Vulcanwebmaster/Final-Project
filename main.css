@@ -5,12 +5,16 @@ body {
     font-size: 20px;
     font-family: "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 }
-h1, th {
+h2, th {
     font-family: Georgia, "Times New Roman", Times, serif;
 }
 
+form{
+    text-align: left;
+}
+
 h1 {
-    text-align: center;
+    text-align: left;
     font-size: 28px;
 }
 

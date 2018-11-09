@@ -1,56 +1,68 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-     <title>Make Your Own Bingo Card</title>
+     <title>Bingo!</title>
      <link rel="stylesheet" rev="stylesheet" href="main.css" />
+     <script src="jquery-3.2.1.js" type="text/javascript"></script>
      <script src="client.js" type="text/javascript" language="javascript"></script>
 </head>
 <body>
-    <h1>Create A Bingo Card</h1>
-    <table class="center">
-        <tr>
-            <th width="20%">B</th>
-            <th width="20%">I</th>
-            <th width="20%">N</th>
-            <th width="20%">G</th>
-            <th width="20%">O</th>
-        </tr>
-        <tr>
-            <td id="square0">&nbsp;</td>
-            <td id="square1">&nbsp;</td>
-            <td id="square2">&nbsp;</td>
-            <td id="square3">&nbsp;</td>
-            <td id="square4">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="square5">&nbsp;</td>
-            <td id="square6">&nbsp;</td>
-            <td id="square7">&nbsp;</td>
-            <td id="square8">&nbsp;</td>
-            <td id="square9">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="square10">&nbsp;</td>
-            <td id="square11">&nbsp;</td>
-            <td id="free">Free</td>
-            <td id="square12">&nbsp;</td>
-            <td id="square13">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="square14">&nbsp;</td>
-            <td id="square15">&nbsp;</td>
-            <td id="square16">&nbsp;</td>
-            <td id="square17">&nbsp;</td>
-            <td id="square18">&nbsp;</td>
-        </tr>
-        <tr>
-            <td id="square19">&nbsp;</td>
-            <td id="square20">&nbsp;</td>
-            <td id="square21">&nbsp;</td>
-            <td id="square22">&nbsp;</td>
-            <td id="square23">&nbsp;</td>
-        </tr>
-    </table>
-    <p><a href="index.html" id="reload"> Click here</a> to create a new card</p>
+    <div id="Login">
+    <h1>Login</h1>
+    <form id="form">
+        <label>Enter username and password</label><br>
+        <input type="text" name="username" value="username">
+        <input type="text" name="password" value="password">
+        <input type="submit"id="submit" value="Submit">
+    </form>
+    </div>
+    <div id="MainPage" hidden="hidden">
+        <h2>Create A Bingo Card</h2>
+        <table class="center">
+            <tr>
+                <th width="20%">B</th>
+                <th width="20%">I</th>
+                <th width="20%">N</th>
+                <th width="20%">G</th>
+                <th width="20%">O</th>
+            </tr>
+            <tr>
+                <td id="square0">&nbsp;</td>
+                <td id="square1">&nbsp;</td>
+                <td id="square2">&nbsp;</td>
+                <td id="square3">&nbsp;</td>
+                <td id="square4">&nbsp;</td>
+            </tr>
+            <tr>
+                <td id="square5">&nbsp;</td>
+                <td id="square6">&nbsp;</td>
+                <td id="square7">&nbsp;</td>
+                <td id="square8">&nbsp;</td>
+                <td id="square9">&nbsp;</td>
+            </tr>
+            <tr>
+                <td id="square10">&nbsp;</td>
+                <td id="square11">&nbsp;</td>
+                <td id="free">Free</td>
+                <td id="square12">&nbsp;</td>
+                <td id="square13">&nbsp;</td>
+            </tr>
+            <tr>
+                <td id="square14">&nbsp;</td>
+                <td id="square15">&nbsp;</td>
+                <td id="square16">&nbsp;</td>
+                <td id="square17">&nbsp;</td>
+                <td id="square18">&nbsp;</td>
+            </tr>
+            <tr>
+                <td id="square19">&nbsp;</td>
+                <td id="square20">&nbsp;</td>
+                <td id="square21">&nbsp;</td>
+                <td id="square22">&nbsp;</td>
+                <td id="square23">&nbsp;</td>
+            </tr>
+        </table>
+        <p><a href="index.html" id="reload"> Click here</a> to create a new card</p>
+    </div>
 </body>
 </html>
