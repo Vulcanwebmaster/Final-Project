@@ -1,19 +1,45 @@
 /*window.onload = initAll;*/
 var usedNums = new Array(76);
 
+var socket = io();
+
+
+socket.on("updateUsers", function(usernames){
+   $("#listOfUsers").html("");
+   for(i in usernames){
+      $("#listOfUsers").append(usernames[i]+"<br>");
+   }
+});
+
 function initAll() {
-    $("#form").submit(function(event){
-        $("#Login").hide();
-        $("#MainPage").show();
-        event.preventDefault();
-    });
-     if (document.getElementById) {
-        document.getElementById("reload"). onclick = anotherCard;
-        newCard();
-     }
-     else {
-        alert("Sorry, your browser doesn't support this script");
-     }
+   $("#loginForm").submit(function(event){
+      //TO-DO: check if username and password math
+      //encrypt password
+      socket.emit("setUsername", $("#username").val(), function(loginSuccessful){
+         if(loginSuccessful===true){
+            $("#Login").hide();
+            $("#MainPage").show();
+            
+         }
+         $("#username").val("");
+      });
+      event.preventDefault();
+      socket.emit("addUser", $("#username").val(), $("#password").val());
+   });
+
+   $("#registerForm").submit(function(event){
+      //TO-DO: check if username already exists in db
+      //if it doesn't, add it and the encrypted password to the db 
+      //show the main page
+   });
+
+   if (document.getElementById) {
+      document.getElementById("reload"). onclick = anotherCard;
+      newCard();
+   }
+   else {
+      alert("Sorry, your browser doesn't support this script");
+   }
 }
 
 function newCard() {

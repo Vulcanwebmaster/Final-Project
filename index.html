@@ -1,23 +1,37 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
      <title>Bingo!</title>
      <link rel="stylesheet" rev="stylesheet" href="main.css" />
      <script src="jquery-3.2.1.js" type="text/javascript"></script>
+     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
      <script src="client.js" type="text/javascript" language="javascript"></script>
+     
 </head>
 <body>
+    
     <div id="Login">
-    <h1>Login</h1>
-    <form id="form">
-        <label>Enter username and password</label><br>
-        <input type="text" name="username" value="username">
-        <input type="text" name="password" value="password">
-        <input type="submit"id="submit" value="Submit">
-    </form>
+        <h1>Login</h1>
+        <form id="loginForm">
+            <h1></h1>
+            <label>Enter username and password</label><br>
+            <input type="text" id="username">
+            <input type="password" id="password">
+            <input type="submit"id="submit" value="Submit">
+        </form id="registerForm">
+        <h2>Register</h2>
+        <form>
+            <label>create new username and password</label><br>
+            <input type="text" id="newUsername">
+            <input type="password" id="newPassword">
+            <input type="submit"id="newSubmit" value="create user">
+        </form>
     </div>
     <div id="MainPage" hidden="hidden">
-        <h2>Create A Bingo Card</h2>
+        <div id="userScreen">
+            <p id="listOfUsers"></p>
+        </div>
+        <h3>Create A Bingo Card</h3>
         <table class="center">
             <tr>
                 <th width="20%">B</th>
