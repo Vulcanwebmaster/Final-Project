@@ -44,6 +44,20 @@ function getUserNames(){
 	}
 	return ret;
 }
+
+function findUserByUsername(username){
+	if(username){
+		return new Promise((resolve, reject) => {
+			db.collection("bingoInfo").findOne({username: username})
+			.exec((err, doc) => {
+				if(err) return reject(err);
+				if(doc) return reject(new Error("Username already exists"));
+				else return resolve(username);
+			});
+		});
+	}
+}
+
 /*
 function tellAllClients(error, result){
 	db.collection("bingoInfo").find({}).toArray(function(err, docs){
@@ -70,15 +84,39 @@ io.on("connection", function(socket){
 	socket.on("submit", function(){
 		db.collection("bingoInfo").insertOne(getUserNames());
 	});
+	
+	socket.on("checkUser", function(username, callbackFunction){
+		console.log("checking if "+username+" is in db");
+		db.collection("bingoInfo").find({username: username}, {$exists:true}).toArray(function(err,doc){
+			if(doc.length==0){
+				console.log("ID is: " + socket.id);
+				nameForSocket[socket.id] = username;
+				io.emit("updateUsers", getUserNames());
+				callbackFunction(true);
+			} 
+			else{
+				console.log(doc);
+				console.log("username already exists"); //TO-DO: write an error message for the client
+				callbackFunction(false);
+			}
+		});
 		
-	socket.on("setUsername", function(username, callbackFunction){
-		if(getUserNames().indexOf(username) >= 0){
+	});
+
+	socket.on("setUsername", function(user, callbackFunction){
+		console.log(user);
+		//checking if username matches the password
+		//check if that specific username matches that specific password.
+		db.collection("bingoInfo").find({ $where: function(){ return(this.username==user);} }).toArray(function(err, doc){
+			if(doc) console.log(doc);
+		});
+
+		if(getUserNames().indexOf(user) >= 0){
 			callbackFunction(false);
 		}
 		else {
 			console.log("ID is: " + socket.id);
-			nameForSocket[socket.id] = username;
-
+			nameForSocket[socket.id] = user;
 			io.emit("updateUsers", getUserNames());
 			callbackFunction(true);
 		}
@@ -93,7 +131,6 @@ io.on("connection", function(socket){
 	io.emit("updateUsers", getUserNames());
 });
 
-//TO-DO change port for https
 client.connect(function(err){
 	if(err != null) throw err;
 	else {

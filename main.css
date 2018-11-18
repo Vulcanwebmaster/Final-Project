@@ -9,6 +9,12 @@ h3, th {
     font-family: Georgia, "Times New Roman", Times, serif;
 }
 
+#newUser {
+    top: 10px;
+    right: 10px;
+    position: absolute;
+}
+
 form{
     text-align: left;
 }

@@ -9,7 +9,6 @@
      
 </head>
 <body>
-    
     <div id="Login">
         <h1>Login</h1>
         <form id="loginForm">
@@ -18,64 +17,33 @@
             <input type="text" id="username">
             <input type="password" id="password">
             <input type="submit"id="submit" value="Submit">
-        </form id="registerForm">
+        </form>
+        <button id="newUser">Sign up</button>
+    </div>
+    <div id="register" hidden="hidden">
         <h2>Register</h2>
-        <form>
+        <form id="registerForm">
             <label>create new username and password</label><br>
             <input type="text" id="newUsername">
             <input type="password" id="newPassword">
             <input type="submit"id="newSubmit" value="create user">
         </form>
     </div>
-    <div id="MainPage" hidden="hidden">
-        <div id="userScreen">
-            <p id="listOfUsers"></p>
-        </div>
-        <h3>Create A Bingo Card</h3>
-        <table class="center">
-            <tr>
-                <th width="20%">B</th>
-                <th width="20%">I</th>
-                <th width="20%">N</th>
-                <th width="20%">G</th>
-                <th width="20%">O</th>
-            </tr>
-            <tr>
-                <td id="square0">&nbsp;</td>
-                <td id="square1">&nbsp;</td>
-                <td id="square2">&nbsp;</td>
-                <td id="square3">&nbsp;</td>
-                <td id="square4">&nbsp;</td>
-            </tr>
-            <tr>
-                <td id="square5">&nbsp;</td>
-                <td id="square6">&nbsp;</td>
-                <td id="square7">&nbsp;</td>
-                <td id="square8">&nbsp;</td>
-                <td id="square9">&nbsp;</td>
-            </tr>
-            <tr>
-                <td id="square10">&nbsp;</td>
-                <td id="square11">&nbsp;</td>
-                <td id="free">Free</td>
-                <td id="square12">&nbsp;</td>
-                <td id="square13">&nbsp;</td>
-            </tr>
-            <tr>
-                <td id="square14">&nbsp;</td>
-                <td id="square15">&nbsp;</td>
-                <td id="square16">&nbsp;</td>
-                <td id="square17">&nbsp;</td>
-                <td id="square18">&nbsp;</td>
-            </tr>
-            <tr>
-                <td id="square19">&nbsp;</td>
-                <td id="square20">&nbsp;</td>
-                <td id="square21">&nbsp;</td>
-                <td id="square22">&nbsp;</td>
-                <td id="square23">&nbsp;</td>
-            </tr>
-        </table>
+    <div id="cardSelector" hidden="hidden">
+        <p>How many cards do you want?</p>
+        <select id="selection">
+            <option id="1 card" value="1">1</option>
+            <option id="2 cards" value="2">2</option>
+            <option id="3 cards" value="3">3</option>
+            <option id="4 cards" value="4">4</option>
+            <option id="5 cards" value="5">5</option>
+        </select>
+        <button id="getCards">Enter</button>
+    </div>
+    <div id="userScreen">
+        <p id="listOfUsers"></p>
+    </div>
+    <div id="bingoCard" hidden="hidden">
         <p><a href="index.html" id="reload"> Click here</a> to create a new card</p>
     </div>
 </body>
