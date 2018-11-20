@@ -13,15 +13,14 @@ socket.on("updateUsers", function(usernames){
 
 function initAll() {
    $("#loginForm").submit(function(event){
-      //TO-DO: check if username and password match
       //encrypt password
       if($("#username").val() != "" && $("#password").val()!=""){
-         socket.emit("setUsername", $("#username").val(), function(loginSuccessful){
+         socket.emit("setUsername", $("#username").val(), $("#password").val(), function(loginSuccessful){
             if(loginSuccessful===true){
                $("#Login").hide();
                $("#bingoCard").show();
                $("#cardSelector").show();
-               socket.emit("addUser", $("#username").val(), $("#password").val());
+               $("#userScreen").show();
             }
             $("#username").val("");
          });
@@ -43,6 +42,8 @@ function initAll() {
                $("#Login").hide();
                $("#register").hide();
                $("#bingoCard").show();
+               $("#cardSelector").show();
+               $("#userScreen").show();
                socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val());
             }
          });
@@ -51,30 +52,37 @@ function initAll() {
       else console.log("Please complete the form correctly");
    });
 
-   if (document.getElementById) {
-      document.getElementById("reload"). onclick = anotherCard;
-      for(var i = 0; i < getNumCardsSelected(); i ++){
-         makeCard();
-         newCard();
-         console.log("card number " + i);
-      }     
-      console.log(getNumCardsSelected());
+   $("#getCards").click(function(){
+      console.log($("#selection option:selected").val());
+      for(var i = 1; i <= $("#selection option:selected").val(); i ++){
+         console.log("Creating card number " + i);
+         makeCard(i);
+         anotherCard();
+      }
+      //document.getElementById("reload"). onclick = anotherCard;
+   });
+   /*
+   if (document.getElementById("")) {
+      console.log($("#selection option:selected").val());
+      makeCard();
+      newCard();
+      
+      //for(var i = 0; i < getNumCardsSelected(); i ++){
+      //   makeCard();
+      //   newCard();
+      //   console.log("card number " + i);
+      //}     
+      //console.log($("#selection option:selected").val());
    }
    else {
       alert("Sorry, your browser doesn't support this script");
-   }
+   }*/
 }
 
-function getNumCardsSelected(){
-   $("#getCards").click(function(){
-       var num = $("#selection option:selected").val();
-       return num;
-   });
-}
-
-function makeCard(){
+function makeCard(i){
    $("#bingoCard").html("");
-   var c = "<h3>Here's your Bingo Card</h3><table><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr><tr><td id=\"square0\">&nbsp;</td><td id=\"square1\">&nbsp;</td><td id=\"square2\">&nbsp;</td><td id=\"square3\">&nbsp;</td><td id=\"square4\">&nbsp;</td></tr><tr><td id=\"square5\">&nbsp;</td><td id=\"square6\">&nbsp;</td><td id=\"square7\">&nbsp;</td><td id=\"square8\">&nbsp;</td><td id=\"square9\">&nbsp;</td></tr><tr><td id=\"square10\">&nbsp;</td><td id=\"square11\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square12\">&nbsp;</td><td id=\"square13\">&nbsp;</td></tr><tr><td id=\"square14\">&nbsp;</td><td id=\"square15\">&nbsp;</td><td id=\"square16\">&nbsp;</td><td id=\"square17\">&nbsp;</td><td id=\"square18\">&nbsp;</td></tr><tr><td id=\"square19\">&nbsp;</td><td id=\"square20\">&nbsp;</td><td id=\"square21\">&nbsp;</td><td id=\"square22\">&nbsp;</td><td id=\"square23\">&nbsp;</td></tr></table>"
+   var c = "<div><h3>Bingo Card "+i+"</h3><table><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr><tr><td id=\"square0\">&nbsp;</td><td id=\"square1\">&nbsp;</td><td id=\"square2\">&nbsp;</td><td id=\"square3\">&nbsp;</td><td id=\"square4\">&nbsp;</td></tr><tr><td id=\"square5\">&nbsp;</td><td id=\"square6\">&nbsp;</td><td id=\"square7\">&nbsp;</td><td id=\"square8\">&nbsp;</td><td id=\"square9\">&nbsp;</td></tr><tr><td id=\"square10\">&nbsp;</td><td id=\"square11\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square12\">&nbsp;</td><td id=\"square13\">&nbsp;</td></tr><tr><td id=\"square14\">&nbsp;</td><td id=\"square15\">&nbsp;</td><td id=\"square16\">&nbsp;</td><td id=\"square17\">&nbsp;</td><td id=\"square18\">&nbsp;</td></tr><tr><td id=\"square19\">&nbsp;</td><td id=\"square20\">&nbsp;</td><td id=\"square21\">&nbsp;</td><td id=\"square22\">&nbsp;</td><td id=\"square23\">&nbsp;</td></tr></table><p>card "+i+" printed</p></div><br>"
+   console.log(c);
    $("#bingoCard").append(c);
 }
 
@@ -92,6 +100,7 @@ function setSquare(thisSquare) {
 
      do {
         newNum = colBasis + getNewNum() + 1;
+        console.log(newNum);
      }
      while (usedNums[newNum]);
 

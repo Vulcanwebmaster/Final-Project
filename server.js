@@ -77,7 +77,6 @@ io.on("connection", function(socket){
 	socket.on("disconnect", function(){
 		console.log(nameForSocket[socket.id] + " disconnected");
 		delete nameForSocket[socket.id];
-		console.log(nameForSocket[socket.id]);
 		io.emit("updateUsers", getUserNames());
 	});
 
@@ -86,16 +85,13 @@ io.on("connection", function(socket){
 	});
 	
 	socket.on("checkUser", function(username, callbackFunction){
-		console.log("checking if "+username+" is in db");
 		db.collection("bingoInfo").find({username: username}, {$exists:true}).toArray(function(err,doc){
 			if(doc.length==0){
-				console.log("ID is: " + socket.id);
 				nameForSocket[socket.id] = username;
 				io.emit("updateUsers", getUserNames());
 				callbackFunction(true);
 			} 
 			else{
-				console.log(doc);
 				console.log("username already exists"); //TO-DO: write an error message for the client
 				callbackFunction(false);
 			}
@@ -103,23 +99,18 @@ io.on("connection", function(socket){
 		
 	});
 
-	socket.on("setUsername", function(user, callbackFunction){
-		console.log(user);
-		//checking if username matches the password
-		//check if that specific username matches that specific password.
-		db.collection("bingoInfo").find({ $where: function(){ return(this.username==user);} }).toArray(function(err, doc){
-			if(doc) console.log(doc);
+	socket.on("setUsername", function(user, pass, callbackFunction){
+		db.collection("bingoInfo").find({username: user}, { $where: function(){ return(this.username==user);} }).toArray(function(err, doc){
+			if(doc[0].username==user && doc[0].password==pass){ 
+				nameForSocket[socket.id] = user;
+				io.emit("updateUsers", getUserNames());
+				callbackFunction(true);
+			}
+			else{
+				console.log("username or password don't match");
+				callbackFunction(false);
+			}
 		});
-
-		if(getUserNames().indexOf(user) >= 0){
-			callbackFunction(false);
-		}
-		else {
-			console.log("ID is: " + socket.id);
-			nameForSocket[socket.id] = user;
-			io.emit("updateUsers", getUserNames());
-			callbackFunction(true);
-		}
 	});
 
 	socket.on("addUser", function(username, password){

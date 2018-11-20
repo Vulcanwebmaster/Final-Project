@@ -9,12 +9,6 @@ h3, th {
     font-family: Georgia, "Times New Roman", Times, serif;
 }
 
-#newUser {
-    top: 10px;
-    right: 10px;
-    position: absolute;
-}
-
 form{
     text-align: left;
 }
@@ -43,4 +37,16 @@ th, td {
     margin-left: auto;
     margin-right: auto;
     width: 50%;
+}
+
+#userScreen {
+    top: 10px;
+    left: 10px;
+    position: absolute;
+}
+
+#newUser {
+    top: 10px;
+    right: 10px;
+    position: absolute;
 }
