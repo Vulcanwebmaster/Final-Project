@@ -44,9 +44,56 @@ th, td {
     left: 10px;
     position: absolute;
 }
-
+/*
 #newUser {
     top: 10px;
     right: 10px;
     position: absolute;
+}*/
+
+#loginForm p{
+    color: red;
+    font-size: 65%;
+}
+
+#registerForm p{
+    color: red;
+    font-size: 65%;
+}
+
+#numberGenerator {
+    
+    top: 10px;
+    right: 10px;
+    position: absolute;
+}
+
+#bingoCard th,td{
+    color: black;
+}
+
+.bigNumberDisplay {
+    font-size: 3.5em;
+}
+
+.numbersTable td,tr{
+    min-width: 10px;
+    min-height: 15px;
+    color: white;
+}
+
+.numbersTable td.selected {
+    color: red;
+}
+
+#playButton{
+    float: right;
+}
+
+#win{
+    color: blue;
+}
+
+#keeppplaying{
+    color: red;
 }

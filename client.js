@@ -1,5 +1,5 @@
-/*window.onload = initAll;*/
 var usedNums = new Array(79);
+var calledNums = [];
 var color = "rgba(10,255,10,.75)";
 var socket = io();
 
@@ -21,14 +21,22 @@ function initAll() {
                $("#bingoCard").show();
                $("#cardSelector").show();
                $("#userScreen").show();
-               $("#numberGenerator").show();
+               //$("#numberGenerator").show();
                $("#playButton").show();
+               $("#bingo").show();
+            }
+            else{
+               $("#userpass").show();
             }
             $("#username").val("");
          });
-         event.preventDefault();
+         
       }
-      else console.log("Please complete the form correctly");
+      else{
+         console.log("Please complete the form correctly");
+         $("#badform").show();
+      } 
+      event.preventDefault();
    });
 
    $("#newUser").click(function(){
@@ -46,14 +54,22 @@ function initAll() {
                $("#bingoCard").show();
                $("#cardSelector").show();
                $("#userScreen").show();
-               $("#numberGenerator").show();
+               //$("#numberGenerator").show();
                $("#playButton").show();
+               $("#bingo").show();
                socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val());
             }
+            else{
+               $("#userexists").show();
+            }
          });
-         event.preventDefault();
+         
       }
-      else console.log("Please complete the form correctly");
+      else{
+         console.log("Please complete the form correctly");
+         $("#abadform").show();
+      } 
+      event.preventDefault();
    });
 
    $("#getCards").click(function(){
@@ -64,17 +80,34 @@ function initAll() {
          anotherCard();
       }
    });
+   
    $(getRandNumDisplayed);
    $(clickHandler);
-   //var bigNum = getRandNumDisplayed();
-   //console.log(bigNum);
-   //var clickedNum = clickHandler();
-   //console.log(clickedNum);
+   
+   $("#bingo").click(function(){
+      console.log("So you think you have bingo?");
+      var count = 0;
+      for(var i = 0; i < calledNums.length; i ++){
+         if(usedNums[calledNums[i]]){
+            count++;
+         }
+      }
+      if(count == 24){
+         console.log("We have a winner, " + username + "won the game");
+         $("#win").show();
+      }
+         
+      else{
+         console.log("You don't have a bingo yet... keep playing");
+         $("#keepplaying").show();
+      } 
+   })
 }
 
 function getRandNumDisplayed(){
    //trying to make the random number generator work from teh server side once the play button is clicked
    $("#play").click(function(){
+      $("#numberGenerator").show();
       var bingo = {
          selectedNumbers: [],
          generateRandom: function() {
@@ -108,13 +141,12 @@ function getRandNumDisplayed(){
       //while(bingo.selectedNumbers.length <= 79){   
          var random = bingo.generateNextRandom().toString();
          console.log(random);
+         calledNums.push(random);
          $('.bigNumberDisplay span').text(random);
          $('.numbersTable td.cell' + random).addClass('selected');
-         return random;
          //sleep(1000);
       //}
       });
-      
    });
 }
 
@@ -126,7 +158,7 @@ function sleep(delay) {
 function clickHandler(){
    $(document).on("click","#mytable tbody td", function(e){
       $(this).css("background-color", color);
-      return e.target.innerHTML;
+      console.log(e.target.innerHTML);
    });
 }
 
@@ -169,12 +201,6 @@ function anotherCard() {
 
      newCard();
      return false;
-}
-
-function refreshData(){
-   x = 5;
-   console.log("hi");
-   setTimeout(refreshData, x*1000);
 }
 
 $(initAll);

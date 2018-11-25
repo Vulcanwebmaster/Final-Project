@@ -17,8 +17,12 @@
             <input type="text" id="username">
             <input type="password" id="password">
             <input type="submit"id="submit" value="Submit">
+            <p id="userpass" hidden="hidden">Username or password don't match</p>
+            <p id="badform" hidden="hidden">Please complete the form correctly</p>
+            <br><br>
+            <label>Or create a new user</label>
+            <button id="newUser">Sign up</button>
         </form>
-        <button id="newUser">Sign up</button>
     </div>
     <div id="register" hidden="hidden">
         <h2>Register</h2>
@@ -27,6 +31,8 @@
             <input type="text" id="newUsername">
             <input type="password" id="newPassword">
             <input type="submit"id="newSubmit" value="create user">
+            <p id="userexists" hidden="hidden">Username already exists in the current database</p>
+            <p id="abadform" hidden="hidden">Please complete the form correctly</p>
         </form>
     </div>
     <div id="cardSelector" hidden="hidden">
@@ -45,6 +51,133 @@
         <p id="listOfUsers"></p>
     </div>
     <div id="bingoCard" class="center" hidden="hidden">
+        <h3>Bingo Card</h3>
+        <table id="mytable"></table>
+    </div>
+    <div id="playButton" hidden="hidden">
+        <button id="play">Start playing</button>
+    </div>
+    <div>
+        <button id="bingo" hidden="hidden">Bingo!</button>
+        <p id="win" hidden="hidden">We have a winner, you won the game!</p>
+        <p id="keepplaying" hidden="hidden">You don't have a bingo yet... keep playing</p>
+    </div>
+    <div id="numberGenerator" hidden="hidden">
+        
+        <div class="bigNumberDisplay">
+            <span>0</span>
+        </div>
+        <div>
+            <input id="btnGenerate" type="button" value="Generate"/>
+        </div>
+    
+        <br/>
+        
+        <div class="numbersTable">
+            <table>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    
     </div>
 </body>
 </html>
