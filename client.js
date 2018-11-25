@@ -1,6 +1,6 @@
 /*window.onload = initAll;*/
-var usedNums = new Array(76);
-
+var usedNums = new Array(79);
+var color = "rgba(10,255,10,.75)";
 var socket = io();
 
 
@@ -21,6 +21,8 @@ function initAll() {
                $("#bingoCard").show();
                $("#cardSelector").show();
                $("#userScreen").show();
+               $("#numberGenerator").show();
+               $("#playButton").show();
             }
             $("#username").val("");
          });
@@ -44,6 +46,8 @@ function initAll() {
                $("#bingoCard").show();
                $("#cardSelector").show();
                $("#userScreen").show();
+               $("#numberGenerator").show();
+               $("#playButton").show();
                socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val());
             }
          });
@@ -59,31 +63,78 @@ function initAll() {
          makeCard(i);
          anotherCard();
       }
-      //document.getElementById("reload"). onclick = anotherCard;
    });
-   /*
-   if (document.getElementById("")) {
-      console.log($("#selection option:selected").val());
-      makeCard();
-      newCard();
+   $(getRandNumDisplayed);
+   $(clickHandler);
+   //var bigNum = getRandNumDisplayed();
+   //console.log(bigNum);
+   //var clickedNum = clickHandler();
+   //console.log(clickedNum);
+}
+
+function getRandNumDisplayed(){
+   //trying to make the random number generator work from teh server side once the play button is clicked
+   $("#play").click(function(){
+      var bingo = {
+         selectedNumbers: [],
+         generateRandom: function() {
+            var min = 1;
+            var max = 79;
+            var random = Math.floor(Math.random() * (max - min + 1)) + min;
+            return random;
+         },
+         generateNextRandom: function() {
+            if (bingo.selectedNumbers.length > 78) {
+            alert("All numbers Exhausted");
+            return 0;
+            }
+            var random = bingo.generateRandom();
+            while ($.inArray(random, bingo.selectedNumbers) > -1) {
+            random = bingo.generateRandom();
+            }
+            bingo.selectedNumbers.push(random);
+            return random;
+         }
+      };
       
-      //for(var i = 0; i < getNumCardsSelected(); i ++){
-      //   makeCard();
-      //   newCard();
-      //   console.log("card number " + i);
-      //}     
-      //console.log($("#selection option:selected").val());
-   }
-   else {
-      alert("Sorry, your browser doesn't support this script");
-   }*/
+      $('.numbersTable td').each(function() {
+         var concatClass = this.cellIndex + "" + this.parentNode.rowIndex;
+         var numberString = parseInt(concatClass, 10).toString();
+         $(this).addClass("cell" + numberString).text(numberString);
+      });
+      
+      
+      $('#btnGenerate').click(function() {
+      //while(bingo.selectedNumbers.length <= 79){   
+         var random = bingo.generateNextRandom().toString();
+         console.log(random);
+         $('.bigNumberDisplay span').text(random);
+         $('.numbersTable td.cell' + random).addClass('selected');
+         return random;
+         //sleep(1000);
+      //}
+      });
+      
+   });
+}
+
+function sleep(delay) {
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + delay);
+}
+
+function clickHandler(){
+   $(document).on("click","#mytable tbody td", function(e){
+      $(this).css("background-color", color);
+      return e.target.innerHTML;
+   });
 }
 
 function makeCard(i){
-   $("#bingoCard").html("");
-   var c = "<div><h3>Bingo Card "+i+"</h3><table><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr><tr><td id=\"square0\">&nbsp;</td><td id=\"square1\">&nbsp;</td><td id=\"square2\">&nbsp;</td><td id=\"square3\">&nbsp;</td><td id=\"square4\">&nbsp;</td></tr><tr><td id=\"square5\">&nbsp;</td><td id=\"square6\">&nbsp;</td><td id=\"square7\">&nbsp;</td><td id=\"square8\">&nbsp;</td><td id=\"square9\">&nbsp;</td></tr><tr><td id=\"square10\">&nbsp;</td><td id=\"square11\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square12\">&nbsp;</td><td id=\"square13\">&nbsp;</td></tr><tr><td id=\"square14\">&nbsp;</td><td id=\"square15\">&nbsp;</td><td id=\"square16\">&nbsp;</td><td id=\"square17\">&nbsp;</td><td id=\"square18\">&nbsp;</td></tr><tr><td id=\"square19\">&nbsp;</td><td id=\"square20\">&nbsp;</td><td id=\"square21\">&nbsp;</td><td id=\"square22\">&nbsp;</td><td id=\"square23\">&nbsp;</td></tr></table><p>card "+i+" printed</p></div><br>"
+   $("#mytable").html("");
+   var c = "<table><thead><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr></thead><tbody><tr><td id=\"square0\">&nbsp;</td><td id=\"square1\">&nbsp;</td><td id=\"square2\">&nbsp;</td><td id=\"square3\">&nbsp;</td><td id=\"square4\">&nbsp;</td></tr><tr><td id=\"square5\">&nbsp;</td><td id=\"square6\">&nbsp;</td><td id=\"square7\">&nbsp;</td><td id=\"square8\">&nbsp;</td><td id=\"square9\">&nbsp;</td></tr><tr><td id=\"square10\">&nbsp;</td><td id=\"square11\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square12\">&nbsp;</td><td id=\"square13\">&nbsp;</td></tr><tr><td id=\"square14\">&nbsp;</td><td id=\"square15\">&nbsp;</td><td id=\"square16\">&nbsp;</td><td id=\"square17\">&nbsp;</td><td id=\"square18\">&nbsp;</td></tr><tr><td id=\"square19\">&nbsp;</td><td id=\"square20\">&nbsp;</td><td id=\"square21\">&nbsp;</td><td id=\"square22\">&nbsp;</td><td id=\"square23\">&nbsp;</td></tr></tbody></table>"
    console.log(c);
-   $("#bingoCard").append(c);
+   $("#mytable").append(c);
 }
 
 function newCard() {
@@ -100,7 +151,7 @@ function setSquare(thisSquare) {
 
      do {
         newNum = colBasis + getNewNum() + 1;
-        console.log(newNum);
+        //console.log(newNum);
      }
      while (usedNums[newNum]);
 
@@ -120,4 +171,35 @@ function anotherCard() {
      return false;
 }
 
+function refreshData(){
+   x = 5;
+   console.log("hi");
+   setTimeout(refreshData, x*1000);
+}
+
 $(initAll);
+
+/*
+   if (document.getElementById("")) {
+      console.log($("#selection option:selected").val());
+      makeCard();
+      newCard();
+      
+      //for(var i = 0; i < getNumCardsSelected(); i ++){
+      //   makeCard();
+      //   newCard();
+      //   console.log("card number " + i);
+      //}     
+      //console.log($("#selection option:selected").val());
+   }
+   else {
+      alert("Sorry, your browser doesn't support this script");
+
+
+
+      function refreshData(){
+         x = 5;
+
+         setTimeOut(refreshData, x*1000);
+      }
+   }*/
