@@ -3,13 +3,14 @@ var calledNums = [];
 var color = "rgba(10,255,10,.75)";
 var socket = io();
 
-
-socket.on("updateUsers", function(usernames){
+socket.on("updateUsers", function(usernames, money){
    $("#listOfUsers").html("");
    for(i in usernames){
-      $("#listOfUsers").append(usernames[i]+"<br>");
+      $("#listOfUsers").append(usernames[i]+" " + money + "<br>");
    }
 });
+
+
 
 function initAll() {
    $("#loginForm").submit(function(event){
@@ -57,7 +58,7 @@ function initAll() {
                //$("#numberGenerator").show();
                $("#playButton").show();
                $("#bingo").show();
-               socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val());
+               socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val(), 0, 0, 900);
             }
             else{
                $("#userexists").show();
@@ -71,16 +72,26 @@ function initAll() {
       } 
       event.preventDefault();
    });
+   //make the server generate the cards
 
    $("#getCards").click(function(){
-      console.log($("#selection option:selected").val());
-      for(var i = 1; i <= $("#selection option:selected").val(); i ++){
-         console.log("Creating card number " + i);
-         makeCard(i);
-         anotherCard();
-      }
+      socket.emit("getCards", Number($("#selection option:selected").val()), function(enoughMoney){
+         if(enoughMoney==true){
+            $("#mytable").html("");
+            for(var i = 1; i <= $("#selection option:selected").val(); i ++){
+               makeCard(i);
+               //fix
+               anotherCard();
+            }
+         }
+         else{
+            console.log("Not enough money for that amount of cards");
+            //TO-DO: dsplay error message
+         }
+      })
+      
    });
-   
+   //make the server generate the random number
    $(getRandNumDisplayed);
    $(clickHandler);
    
@@ -129,7 +140,6 @@ function getRandNumDisplayed(){
             return random;
          }
       };
-      
       $('.numbersTable td').each(function() {
          var concatClass = this.cellIndex + "" + this.parentNode.rowIndex;
          var numberString = parseInt(concatClass, 10).toString();
@@ -163,9 +173,8 @@ function clickHandler(){
 }
 
 function makeCard(i){
-   $("#mytable").html("");
-   var c = "<table><thead><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr></thead><tbody><tr><td id=\"square0\">&nbsp;</td><td id=\"square1\">&nbsp;</td><td id=\"square2\">&nbsp;</td><td id=\"square3\">&nbsp;</td><td id=\"square4\">&nbsp;</td></tr><tr><td id=\"square5\">&nbsp;</td><td id=\"square6\">&nbsp;</td><td id=\"square7\">&nbsp;</td><td id=\"square8\">&nbsp;</td><td id=\"square9\">&nbsp;</td></tr><tr><td id=\"square10\">&nbsp;</td><td id=\"square11\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square12\">&nbsp;</td><td id=\"square13\">&nbsp;</td></tr><tr><td id=\"square14\">&nbsp;</td><td id=\"square15\">&nbsp;</td><td id=\"square16\">&nbsp;</td><td id=\"square17\">&nbsp;</td><td id=\"square18\">&nbsp;</td></tr><tr><td id=\"square19\">&nbsp;</td><td id=\"square20\">&nbsp;</td><td id=\"square21\">&nbsp;</td><td id=\"square22\">&nbsp;</td><td id=\"square23\">&nbsp;</td></tr></tbody></table>"
-   console.log(c);
+   console.log("creating card " + i)
+   var c = "<p>Card number "+i+"</p><table><thead><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr></thead><tbody><tr><td id=\"square0\">&nbsp;</td><td id=\"square1\">&nbsp;</td><td id=\"square2\">&nbsp;</td><td id=\"square3\">&nbsp;</td><td id=\"square4\">&nbsp;</td></tr><tr><td id=\"square5\">&nbsp;</td><td id=\"square6\">&nbsp;</td><td id=\"square7\">&nbsp;</td><td id=\"square8\">&nbsp;</td><td id=\"square9\">&nbsp;</td></tr><tr><td id=\"square10\">&nbsp;</td><td id=\"square11\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square12\">&nbsp;</td><td id=\"square13\">&nbsp;</td></tr><tr><td id=\"square14\">&nbsp;</td><td id=\"square15\">&nbsp;</td><td id=\"square16\">&nbsp;</td><td id=\"square17\">&nbsp;</td><td id=\"square18\">&nbsp;</td></tr><tr><td id=\"square19\">&nbsp;</td><td id=\"square20\">&nbsp;</td><td id=\"square21\">&nbsp;</td><td id=\"square22\">&nbsp;</td><td id=\"square23\">&nbsp;</td></tr></tbody></table>"
    $("#mytable").append(c);
 }
 
@@ -183,7 +192,7 @@ function setSquare(thisSquare) {
 
      do {
         newNum = colBasis + getNewNum() + 1;
-        //console.log(newNum);
+        console.log(newNum);
      }
      while (usedNums[newNum]);
 
@@ -205,27 +214,3 @@ function anotherCard() {
 
 $(initAll);
 
-/*
-   if (document.getElementById("")) {
-      console.log($("#selection option:selected").val());
-      makeCard();
-      newCard();
-      
-      //for(var i = 0; i < getNumCardsSelected(); i ++){
-      //   makeCard();
-      //   newCard();
-      //   console.log("card number " + i);
-      //}     
-      //console.log($("#selection option:selected").val());
-   }
-   else {
-      alert("Sorry, your browser doesn't support this script");
-
-
-
-      function refreshData(){
-         x = 5;
-
-         setTimeOut(refreshData, x*1000);
-      }
-   }*/

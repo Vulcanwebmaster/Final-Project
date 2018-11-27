@@ -45,32 +45,17 @@ function getUserNames(){
 	return ret;
 }
 
-function findUserByUsername(username){
-	if(username){
-		return new Promise((resolve, reject) => {
-			db.collection("bingoInfo").findOne({username: username})
-			.exec((err, doc) => {
-				if(err) return reject(err);
-				if(doc) return reject(new Error("Username already exists"));
-				else return resolve(username);
-			});
-		});
-	}
-}
-
-/*
-function tellAllClients(error, result){
-	db.collection("bingoInfo").find({}).toArray(function(err, docs){
-		if(err != null) {
-			throw err;
-			console.log("error: " + err);
+function getMoney(user){
+	db.collection("bingoInfo").find({ username: user }).toArray(function(err,docs) {
+		if(docs[0].username==user){
+			return docs[0].money;
 		}
 		else{
-			io.emit("updateUsers", docs);
+			console.log(err);
 		}
 	});
 }
-*/
+
 io.on("connection", function(socket){
 	console.log("Somebody connected");
 
@@ -80,10 +65,6 @@ io.on("connection", function(socket){
 		io.emit("updateUsers", getUserNames());
 	});
 
-	socket.on("submit", function(){
-		db.collection("bingoInfo").insertOne(getUserNames());
-	});
-	
 	socket.on("checkUser", function(username, callbackFunction){
 		db.collection("bingoInfo").find({username: username}, {$exists:true}).toArray(function(err,doc){
 			if(doc.length==0){
@@ -103,7 +84,7 @@ io.on("connection", function(socket){
 		db.collection("bingoInfo").find({username: user}, { $where: function(){ return(this.username==user);} }).toArray(function(err, doc){
 			if(doc[0].username==user && doc[0].password==pass){ 
 				nameForSocket[socket.id] = user;
-				io.emit("updateUsers", getUserNames());
+				io.emit("updateUsers", getUserNames(), doc[0].money);
 				callbackFunction(true);
 			}
 			else{
@@ -113,13 +94,34 @@ io.on("connection", function(socket){
 		});
 	});
 
-	socket.on("addUser", function(username, password){
+	socket.on("addUser", function(username, password, wins, losses, money){
 		console.log("addUser was called with " + username + " " + password);
-		var obj = {username: username, password: password};
+		var obj = {username: username, password: password, wins: wins, losses: losses, money: money};
 		db.collection("bingoInfo").insertOne(obj);
 	});
 
 	io.emit("updateUsers", getUserNames());
+	
+	socket.on("getCards", function(numCards, callbackFunction){
+		var money;
+		db.collection("bingoInfo").find({ username: nameForSocket[socket.id] }).toArray(function(err,docs) {
+			if(docs.length>0){
+				money=docs[0].money;
+			}
+			else console.log(err);
+		});
+
+		if(200 * numCards > money){
+			console.log(typeof(numCards));
+			callbackFunction(false);
+		}
+		else{
+			money = money - numCards*200;
+			socket.emit("displayCards", numCards);
+			callbackFunction(true);
+		}
+	});
+	
 });
 
 client.connect(function(err){
