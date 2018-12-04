@@ -3,6 +3,7 @@ var calledNums = [];
 var color = "rgba(10,255,10,.75)";
 var socket = io();
 var j = -1;
+
 socket.on("updateUsers", function(usernames, money){
    $("#listOfUsers").html("");
    for(i in usernames){
@@ -58,7 +59,7 @@ function initAll() {
                //$("#numberGenerator").show();
                $("#playButton").show();
                $("#bingo").show();
-               socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val(), 0, 0, 900);
+               socket.emit("addUser", $("#newUsername").val(), hash($("#newPassword").val()), 0, 0, 900);
             }
             else{
                $("#userexists").show();
@@ -77,13 +78,12 @@ function initAll() {
    $("#getCards").click(function(){
       socket.emit("getCards", Number($("#selection option:selected").val()), function(enoughMoney){
          if(enoughMoney==true){
-            $("#cardSelector").hide();
             $("#mytable").html("");
             for(var i = 1; i <= $("#selection option:selected").val(); i ++){
                makeCard(i);
                //fix
+               anotherCard();
             }
-            anotherCard();
          }
          else{
             console.log("Not enough money for that amount of cards");
@@ -149,18 +149,68 @@ function getRandNumDisplayed(){
       
       
       $('#btnGenerate').click(function() {
-      //while(bingo.selectedNumbers.length <= 79){   
          setInterval(function(){
-         var random = bingo.generateNextRandom().toString();
-         console.log(random);
-         calledNums.push(random);
-         $('.bigNumberDisplay span').text(random);
-         $('.numbersTable td.cell' + random).addClass('selected');
-         //sleep(1000);
-         }, 3000);
-      //}
+            var random = bingo.generateNextRandom().toString();
+            console.log(random);
+            calledNums.push(random);
+            $('.bigNumberDisplay span').text(random);
+            $('.numbersTable td.cell' + random).addClass('selected');
+         }, 3000);  
       });
    });
+}
+
+function hash(password){
+   var ret = 0;
+   for(i in password){
+      ret = Math.pow(password[i]*31, password.length-i-1);
+   }
+   return ret;
+}
+
+function makeCard(i){
+	console.log("creating card " + i)
+	var c = "<p>Card number "+i+"</p><table><thead><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr></thead><tbody><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr></tbody></table>"
+	return c;
+}
+
+function increment(j){
+	j++;
+	return j;
+}
+
+function newCard() {
+	for (var i=0; i<24; i++) {
+	   setSquare(j);
+	}
+}
+
+function setSquare(thisSquare) {
+	var currSquare = "square" + thisSquare;
+	var colPlace = new Array(0,1,2,3,4,0,1,2,3,4,0,1,3,4,0,1,2,3,4,0,1,2,3,4);
+	var colBasis = colPlace[thisSquare] * 15;
+	var newNum;
+
+	do {
+	   newNum = colBasis + getNewNum() + 1;
+	   console.log(newNum);
+	}
+	while (usedNums[newNum]);
+
+	usedNums[newNum] = true;
+	document.getElementById(currSquare). innerHTML = newNum;
+}
+
+function getNewNum() {
+	return Math.floor(Math.random() * 15);
+}
+function anotherCard() {
+	for (var i=1; i<usedNums.length; i++) {
+	   usedNums[i] = false;
+	}
+
+	newCard();
+	return false;
 }
 
 function sleep(delay) {
@@ -175,60 +225,7 @@ function clickHandler(){
    });
 }
 
-function makeCard(i){
-   console.log("creating card " + i);
-   var c = "<p>Card number "+i+"</p><table><thead><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr></thead><tbody><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td><td id=\"square"+increment(j)+"\">&nbsp;</td></tr></tbody></table>"
-   console.log("j is: "+j);
-   console.log(typeof(j));
-   $("#mytable").append(c);
-}
 
-function increment(){
-      j++;
-      console.log("increment j: "+j);
-      return j;
-   }
-
-function getNumSquares(){
-   var numCards = Number($("#selection option:selected").val());
-   return numCards*24;
-}
-
-function newCard() {
-   console.log("there should be: "+getNumSquares());
-     for (var i=0; i<getNumSquares(); i++) {
-        setSquare(i);
-     }
-}
-
-function setSquare(thisSquare) {
-     var currSquare = "square" + thisSquare;
-     console.log("current square "+currSquare);
-     var colPlace = new Array(0,1,2,3,4,0,1,2,3,4,0,1,3,4,0,1,2,3,4,0,1,2,3,4);
-     var colBasis = colPlace[thisSquare] * 15;
-     var newNum;
-
-     do {
-        newNum = colBasis + getNewNum() + 1;
-        console.log(newNum);
-     }
-     while (usedNums[newNum]);
-
-     usedNums[newNum] = true;
-     document.getElementById(currSquare).innerHTML = newNum;
-}
-
-function getNewNum() {
-     return Math.floor(Math.random() * 15);
-}
-function anotherCard() {
-     for (var i=1; i<usedNums.length; i++) {
-        usedNums[i] = false;
-     }
-
-     newCard();
-     return false;
-}
 
 $(initAll);
 
