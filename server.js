@@ -45,17 +45,6 @@ function getUserNames(){
 	return ret;
 }
 
-function getMoney(user){
-	db.collection("bingoInfo").find({ username: user }).toArray(function(err,docs) {
-		if(docs[0].username==user){
-			return docs[0].money;
-		}
-		else{
-			console.log(err);
-		}
-	});
-}
-
 io.on("connection", function(socket){
 	console.log("Somebody connected");
 
@@ -103,23 +92,26 @@ io.on("connection", function(socket){
 	io.emit("updateUsers", getUserNames());
 	
 	socket.on("getCards", function(numCards, callbackFunction){
+		
 		var money;
 		db.collection("bingoInfo").find({ username: nameForSocket[socket.id] }).toArray(function(err,docs) {
 			if(docs.length>0){
 				money=docs[0].money;
 			}
 			else console.log(err);
+			if(200 * numCards > money){
+				//TO-DO: write error message on the screen
+				console.log("not enough money to buy that many cards");
+				callbackFunction(false);
+			}
+			else{
+				money = money - numCards*200;
+				socket.emit("displayCards", numCards);
+				callbackFunction(true);
+			}
 		});
-
-		if(200 * numCards > money){
-			console.log(typeof(numCards));
-			callbackFunction(false);
-		}
-		else{
-			money = money - numCards*200;
-			socket.emit("displayCards", numCards);
-			callbackFunction(true);
-		}
+		
+		
 	});
 	
 });
