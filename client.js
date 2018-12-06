@@ -79,7 +79,36 @@ function initAll() {
    //make the server generate the cards
 
    $("#Leaderboard").click(function(){
+      socket.emit("fillTable", function(sucess){
+         if(sucess){
+            $("#Login").hide();
+            $("#register").hide();
+            $("#bingoCard").hide();
+            $("#cardSelector").hide();
+            $("#userScreen").hide();
+            //$("#numberGenerator").show();
+            $("#playButton").hide();
+            $("#bingo").hide();
+            $("#line").hide();
+            $("#Leaderboard").hide();
+            $("#userDB").show();
+            $("#userDB").html("");
+            var a = "<thead><tr><td>Username</td><td># of Wins</td><td># of Losses</td><td>Money</td></tr>";
+            $("#userDB").append(a);
+            socket.on("getContents", function(username, wins, losses, money){
+               console.log(username);
+               console.log(wins);
+               console.log(losses);
+               console.log(money);
+               var r = "<tbody><tr><td>"+username+"</td><td>"+wins+"</td><td>"+losses+"</td><td>"+money+"</td></tr></tbody>";
+               $("#userDB").append(r);
+            });
 
+         }
+         else{
+            console.log("bad username");
+         }
+      })
    });
 
    $("#getCards").click(function(){

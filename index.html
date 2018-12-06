@@ -9,7 +9,7 @@
      
 </head>
 <body>
-    <div id="Leaderboard">
+    <div id="Leaderboard" hidden="hidden">
         <button id="seeLeaderboard" style = "float: right; top: 0px;">Go to leaderboard</button>
     </div>
     <div id="Login">
@@ -70,21 +70,13 @@
         <button id="postageStamp" hidden ="hidden">Postage Stamp!</button>
         <p id="postageStampWin" hidden = "hidden">You have postage Stamp completed!</p>
         <p id="notFinishedPostageStamp" hidden = "hidden"> Keep playing.</p>
+        <button id="line" hidden="hidden">Line!</button>
+        <p id="linewin" hidden="hidden">You have a line!</p>
+        <p id="notline" hidden="hidden">You don't have a line yet, keep playing</p>
 
     </div>
-    <div id="container" hidden = "hidden">
-        <table>
-            <thead>
-                <tr>
-                    <th id= "usernameLeaderboard">Username:</th>
-                    <th id = "winNumber"># of Wins</th>
-                    <th id = "lossNumber"># of losses</th>
-                    <th id = "winRatio">Win ratio</th> 
-                    <th id = "currentMoney"> current Money</th>
-                </tr>
-            </thead>
-            <tbody id = "userList">
-            </tbody>
+    <div id="container">
+        <table id="userDB" hidden="hidden">
         </table>
     </div>
     <div id="numberGenerator" hidden="hidden">

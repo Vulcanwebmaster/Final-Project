@@ -18,14 +18,15 @@ var secureServer = https.createServer(options, app);
 var http = require("http");
 var insecureServer = http.createServer(app);
 var socketIo = require("socket.io");
-var io = socketIo(secureServer);
+var io = socketIo(insecureServer);
 
 //This is to redirect traffic from port 80 (insecure) to port 443 (secure)
 app.use(function(req, res, next) {
     if (req.secure) {
         next();
     } else {
-        res.redirect('https://' + req.headers.host + req.url);
+        next();
+//        res.redirect('https://' + req.headers.host + req.url);
     }
 });
 
@@ -44,6 +45,8 @@ function getUserNames(){
 	}
 	return ret;
 }
+
+
 
 io.on("connection", function(socket){
 	console.log("Somebody connected");
@@ -91,6 +94,22 @@ io.on("connection", function(socket){
 
 	io.emit("updateUsers", getUserNames());
 	
+	socket.on("fillTable", function(success){
+		db.collection("bingoInfo").find().sort( { username: 1 } ).toArray(function(err, doc){
+			if(doc!=null){
+				success(true);
+				console.log(doc);
+				for(var i = 0; i < doc.length; i++){
+					socket.emit("getContents", doc[i].username, doc[i].wins, doc[i].losses, doc[i].money)
+				}
+			}
+			else{
+				success(false);
+				console.log("db error");
+			}
+		});
+	});
+
 	socket.on("getCards", function(numCards, callbackFunction){
 		
 		var money;
@@ -120,7 +139,7 @@ client.connect(function(err){
 	if(err != null) throw err;
 	else {
 		db = client.db("bingoInfo");
-		secureServer.listen(443, function() {console.log("Secure server is ready.");});
+		//secureServer.listen(443, function() {console.log("Secure server is ready.");});
 		insecureServer.listen(80, function() {console.log("Insecure (forwarding) server is ready.");});
 	}
 });
