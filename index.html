@@ -48,7 +48,6 @@
             <option id="5 cards" value="5">5</option>
         </select>
         <button id="getCards">Enter</button>
-        <p id="keepplaying" hidden="hidden">Not enough money to buy all these cards</p>
     </div>
     <div id="userScreen" hidden="hidden">
         <p>Users online</p>
@@ -65,6 +64,28 @@
         <button id="bingo" hidden="hidden">Bingo!</button>
         <p id="win" hidden="hidden">We have a winner, you won the game!</p>
         <p id="keepplaying" hidden="hidden">You don't have a bingo yet... keep playing</p>
+        <button id="fourCorners" hidden ="hidden">Four Corners!</button>
+        <p id="fourCornerWin" hidden = "hidden">You have four corners completed!</p>
+        <p id="notFinished4Corners" hidden = "hidden"> Keep playing.</p>
+        <button id="postageStamp" hidden ="hidden">Postage Stamp!</button>
+        <p id="postageStampWin" hidden = "hidden">You have postage Stamp completed!</p>
+        <p id="notFinishedPostageStamp" hidden = "hidden"> Keep playing.</p>
+
+    </div>
+    <div id="container" hidden = "hidden">
+        <table>
+            <thead>
+                <tr>
+                    <th id= "usernameLeaderboard">Username:</th>
+                    <th id = "winNumber"># of Wins</th>
+                    <th id = "lossNumber"># of losses</th>
+                    <th id = "winRatio">Win ratio</th> 
+                    <th id = "currentMoney"> current Money</th>
+                </tr>
+            </thead>
+            <tbody id = "userList">
+            </tbody>
+        </table>
     </div>
     <div id="numberGenerator" hidden="hidden">
         
