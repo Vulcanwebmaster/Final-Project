@@ -27,6 +27,7 @@ function initAll() {
                $("#bingo").show();
                $("#line").show();
                $("#Leaderboard").show();
+               $("#notYet").show();
             }
             else{
                $("#userpass").show();
@@ -62,6 +63,7 @@ function initAll() {
                $("#bingo").show();
                $("#line").show();
                $("#Leaderboard").show();
+               $("#notYet").show();
                socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val(), 0, 0, 2000);
             }
             else{
@@ -78,7 +80,7 @@ function initAll() {
    });
    //make the server generate the cards
 
-   $("#Leaderboard").click(function(){
+   $("#Leaderboard1").click(function(){
       socket.emit("fillTable", function(sucess){
          if(sucess){
             $("#Login").hide();
@@ -86,6 +88,8 @@ function initAll() {
             $("#bingoCard").hide();
             $("#cardSelector").hide();
             $("#userScreen").hide();
+            $("#postageStamp1").hide();
+            $("#fourCorners").hide();
             //$("#numberGenerator").show();
             $("#playButton").hide();
             $("#bingo").hide();
@@ -178,67 +182,37 @@ function initAll() {
          $("#notFinished4Corners").show();
          console.log("NAH DAWG");
       } 
-       
-      $("#postageStamp1").click(function(){
-         var count = 0;
-         for(var i = 0; i < calledNums.length; i++){
-            if(calledNums[i] == document.getElementById("square0").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square1").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square5").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square6").innerHTML){count++;}
-         }
-         if(count == 4){
-            $("#postageStampWin1").show();
-            socket.emit("postageStampWin", $("#username").val(), 20);
-         }
-         else{$("#notFinishedPostageStamp").show();}    
-      });
-   
-      $("#postageStamp2").click(function(){
-         var count = 0;
-         for(var i = 0; i < calledNums.length; i++){
-            if(calledNums[i] == document.getElementById("square3").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square4").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square8").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square9").innerHTML){count++;}
-         }
-         if(count == 4){
-            $("#postageStampWin2").show();
-            socket.emit("postageStampWin", $("#username").val(), 20);
-         }
-         else{$("#notFinishedPostageStamp2").show();}
-      });
-
-      $("#postageStamp3").click(function(){
-         var count = 0;
-         for(var i = 0; i < calledNums.length; i++){
-            if(calledNums[i] == document.getElementById("square14").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square15").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square19").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square20").innerHTML){count++;}
-         }
-         if(count == 4){
-            $("#postageStampWin3").show();
-            socket.emit("postageStampWin", $("#username").val(), 20);
-         }
-         else{$("#notFinishedPostageStamp3").show();}    
-      });
-
-      $("#postageStamp4").click(function(){
-         var count = 0;
-         for(var i = 0; i < calledNums.length; i++){
-            if(calledNums[i] == document.getElementById("square17").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square18").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square20").innerHTML){count++;}
-            if(calledNums[i] == document.getElementById("square23").innerHTML){count++;}
-         }
-         if(count == 4){
-            $("#postageStampWin3").show();
-            socket.emit("postageStampWin", $("#username").val(), 20);
-         }
-         else{$("#notFinishedPostageStamp3").show();}    
-      });
-   
+   });    
+   $("#postageStamp1").click(function(){
+      var count = 0;
+      for(var i = 0; i < calledNums.length; i++){
+         if(calledNums[i] == document.getElementById("square0").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square1").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square5").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square6").innerHTML){count++;}
+      }
+      for(var i = 0; i < calledNums.length; i++){
+         if(calledNums[i] == document.getElementById("square3").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square4").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square8").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square9").innerHTML){count++;}
+      }
+      for(var i = 0; i < calledNums.length; i++){
+         if(calledNums[i] == document.getElementById("square14").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square15").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square19").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square20").innerHTML){count++;}
+      }for(var i = 0; i < calledNums.length; i++){
+         if(calledNums[i] == document.getElementById("square17").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square18").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square20").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square23").innerHTML){count++;}
+      }
+      if(count == 4){
+         $("#postageStampWin1").show();
+         socket.emit("postageStampWin", $("#username").val(), 20);
+      }
+      else{$("#notFinishedPostageStamp").show();}    
    });
 
    $("#line").click(function(){
@@ -274,11 +248,7 @@ function initAll() {
          if(calledNums[i]==document.getElementById("square22").innerHTML) count5++;
          if(calledNums[i]==document.getElementById("square23").innerHTML) count5++;
       }
-      //console.log(count1);
-      //console.log(count2);
-      //console.log(count3);
-      //console.log(count4);
-      //console.log(count5);
+      
       if(count1==5||count2==5||count3==4||count4==5||count5==5){
          console.log("you got a line");
          $("#linewin").show();
@@ -295,6 +265,7 @@ function initAll() {
 function getRandNumDisplayed(){
    //trying to make the random number generator work from teh server side once the play button is clicked
    $("#play").click(function(){
+      $("#playButton").hide();
       $("#numberGenerator").show();
       var bingo = {
          selectedNumbers: [],
@@ -325,13 +296,13 @@ function getRandNumDisplayed(){
       
       
       $('#btnGenerate').click(function() {
-         //setInterval(function(){
+         setInterval(function(){
             var random = bingo.generateNextRandom().toString();
             console.log(random);
             calledNums.push(random);
             $('.bigNumberDisplay span').text(random);
             $('.numbersTable td.cell' + random).addClass('selected');
-         //}, 3000);  
+         }, 3000);  
       });
    });
 }
