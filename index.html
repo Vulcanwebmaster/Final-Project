@@ -2,16 +2,13 @@
 <html>
 <head>
      <title>Bingo!</title>
-     <link rel="stylesheet" rev="stylesheet" href="main.css" />
+     <link rel="stylesheet" type ="text/css" media="screen" href="main.css" />
      <script src="jquery-3.2.1.js" type="text/javascript"></script>
      <script src="/socket.io/socket.io.js" type="text/javascript"></script>
      <script src="client.js" type="text/javascript" language="javascript"></script>
      
 </head>
-<body>
-    <div id="Leaderboard" hidden="hidden">
-        <button id="seeLeaderboard" style = "float: right; top: 0px;">Go to leaderboard</button>
-    </div>
+<body id="qwer">
     <div id="Login">
         <h1>Login</h1>
         <form id="loginForm">
@@ -67,16 +64,37 @@
         <button id="fourCorners" hidden ="hidden">Four Corners!</button>
         <p id="fourCornerWin" hidden = "hidden">You have four corners completed!</p>
         <p id="notFinished4Corners" hidden = "hidden"> Keep playing.</p>
-        <button id="postageStamp" hidden ="hidden">Postage Stamp!</button>
-        <p id="postageStampWin" hidden = "hidden">You have postage Stamp completed!</p>
-        <p id="notFinishedPostageStamp" hidden = "hidden"> Keep playing.</p>
         <button id="line" hidden="hidden">Line!</button>
         <p id="linewin" hidden="hidden">You have a line!</p>
         <p id="notline" hidden="hidden">You don't have a line yet, keep playing</p>
-
+    <div id="notYet" hidden ="hidden" class="btn-group">
+        <button id="postageStamp1" hidden ="hidden">Top left postageStamp</button>
+        <p id="postageStampWin1" hidden = "hidden">You have top left postage Stamp completed!</p>
+        <p id="notFinishedPostageStamp" hidden = "hidden"> Keep playing.</p>
+        <button id="postageStamp2" hidden ="hidden">Top right postageStamp</button>
+        <p id="postageStampWin2" hidden = "hidden">You have top right postage Stamp completed!</p>
+        <p id="notFinishedPostageStamp2" hidden = "hidden"> Keep playing.</p>
+        <button id="postageStamp3" hidden ="hidden">Buttom left postageStamp</button>
+        <p id="postageStampWin3" hidden = "hidden">You have buttom left postage Stamp completed!</p>
+        <p id="notFinishedPostageStamp3" hidden = "hidden"> Keep playing.</p>
+        <button id="postageStamp4" hidden ="hidden">buttom right postageStamp</button>
+        <p id="postageStampWin4" hidden = "hidden">You have buttom right postage Stamp completed!</p>
+        <p id="notFinishedPostageStamp4" hidden = "hidden"> Keep playing.</p>
     </div>
-    <div id="container">
-        <table id="userDB" hidden="hidden">
+    </div>
+    <div id="container" hidden = "hidden">
+        <table>
+            <thead>
+                <tr>
+                    <th id= "usernameLeaderboard">Username:</th>
+                    <th id = "winNumber"># of Wins</th>
+                    <th id = "lossNumber"># of losses</th>
+                    <th id = "winRatio">Win ratio</th> 
+                    <th id = "currentMoney"> current Money</th>
+                </tr>
+            </thead>
+            <tbody id = "userList">
+            </tbody>
         </table>
     </div>
     <div id="numberGenerator" hidden="hidden">
