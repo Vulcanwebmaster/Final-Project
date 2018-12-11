@@ -1,19 +1,20 @@
 var usedNums = new Array(79);
 var calledNums = [];
-var numCalled = []
-var color = ["rgba(10, 255, 10, .75)", "rgba(0,0,0,.75)"];
-var currentColor = "rgba(0,0,0,.75)";
+var color = "rgba(10,255,10,.75)";
 var socket = io();
 
-socket.on("updateUsers", function(usernames){
+socket.on("updateUsers", function(usernames, money){
    $("#listOfUsers").html("");
    for(i in usernames){
-      $("#listOfUsers").append(usernames[i]+"<br>");
+      $("#listOfUsers").append(usernames[i]+" " + money + "<br>");
    }
 });
+
+
+
 function initAll() {
    $("#loginForm").submit(function(event){
-      //encrypt password
+      socket.emit("checkUsername", $("#username").val());
       if($("#username").val() != "" && $("#password").val()!=""){
          socket.emit("setUsername", $("#username").val(), $("#password").val(), function(loginSuccessful){
             if(loginSuccessful===true){
@@ -22,10 +23,10 @@ function initAll() {
                $("#cardSelector").show();
                $("#userScreen").show();
                //$("#numberGenerator").show();
-               $("#line").show();
                $("#playButton").show();
                $("#bingo").show();
-               $("#fourCorners").show();
+               $("#line").show();
+               $("#Leaderboard").show();
                $("#notYet").show();
             }
             else{
@@ -57,13 +58,13 @@ function initAll() {
                $("#bingoCard").show();
                $("#cardSelector").show();
                $("#userScreen").show();
-               $("#line").show();
                //$("#numberGenerator").show();
                $("#playButton").show();
                $("#bingo").show();
+               $("#line").show();
+               $("#Leaderboard").show();
                $("#notYet").show();
-               $("#fourCorners").show();
-               socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val());
+               socket.emit("addUser", $("#newUsername").val(), $("#newPassword").val(), 0, 0, 2000);
             }
             else{
                $("#userexists").show();
@@ -77,204 +78,195 @@ function initAll() {
       } 
       event.preventDefault();
    });
+   //make the server generate the cards
+
+   $("#Leaderboard1").click(function(){
+      socket.emit("fillTable", function(sucess){
+         if(sucess){
+            $("#Login").hide();
+            $("#register").hide();
+            $("#bingoCard").hide();
+            $("#cardSelector").hide();
+            $("#userScreen").hide();
+            $("#postageStamp1").hide();
+            $("#fourCorners").hide();
+            //$("#numberGenerator").show();
+            $("#playButton").hide();
+            $("#bingo").hide();
+            $("#line").hide();
+            $("#Leaderboard").hide();
+            $("#userDB").show();
+            $("#userDB").html("");
+            var a = "<thead><tr><td>Username</td><td># of Wins</td><td># of Losses</td><td>Money earned</td></tr>";
+            $("#userDB").append(a);
+            socket.on("getContents", function(username, wins, losses, money){
+               console.log(username);
+               console.log(wins);
+               console.log(losses);
+               console.log(money);
+               var r = "<tbody><tr><td>"+username+"</td><td>"+wins+"</td><td>"+losses+"</td><td>"+2000-Number(money)+"</td></tr></tbody>";
+               $("#userDB").append(r);
+            });
+
+         }
+         else{
+            console.log("bad username");
+         }
+      })
+   });
 
    $("#getCards").click(function(){
-      console.log($("#selection option:selected").val());
-      $("#mytable").html("");
- //   pageBreaks = 'on';
-      for(var i = 1; i <= $("#selection option:selected").val(); i ++){
-         console.log("Creating card number " + i);
-         makeCard(i);
-         anotherCard();
-      }
+      socket.emit("getCards", Number($("#selection option:selected").val()), function(enoughMoney){
+         if(enoughMoney==true){
+            $("#mytable").html("");
+            for(var i = 1; i <= $("#selection option:selected").val(); i ++){
+               makeCard(i);
+               //fix
+               
+            }
+            anotherCard();
+         }
+         else{
+            console.log("Not enough money for that amount of cards");
+            $("#keepplaying").show();
+         }
+      })
+      
    });
-   
+   //make the server generate the random number
    $(getRandNumDisplayed);
    $(clickHandler);
    
    $("#bingo").click(function(){
+      console.log("So you think you have bingo?");
       var count = 0;
       for(var i = 0; i < calledNums.length; i ++){
          if(usedNums[calledNums[i]]){
             count++;
          }
-         
       }
       if(count == 24){
          console.log("We have a winner, " + username + "won the game");
          $("#win").show();
-      }      
+         socket.emit("bingoWin", $("#username").val(), 500);
+      }
+         
       else{
          console.log("You don't have a bingo yet... keep playing");
          $("#keepplaying").show();
-      }
+      } 
    })
 
+   $("#fourCorners").click(function(){
+      var count = 0;      
+      for(var i = 0; i < calledNums.length; i++){
+         if(calledNums[i] == document.getElementById("square0").innerHTML){
+            count++;
+         }
+         else if(calledNums[i] == document.getElementById("square19").innerHTML){
+            count++;
+         }
+         else if(calledNums[i] == document.getElementById("square23").innerHTML){
+            count++;
+         }
+         else if(calledNums[i] == document.getElementById("square4").innerHTML){
+            count++;
+         }
+      }
+      if(count == 4){
+         $("#fourCornerWin").show();
+         console.log("You have 4 coners");
+         socket.emit("cornersWin", $("#username").val(), 20);
+      }
+      else{
+         $("#notFinished4Corners").show();
+         console.log("NAH DAWG");
+      } 
+   });    
    $("#postageStamp1").click(function(){
       var count = 0;
       for(var i = 0; i < calledNums.length; i++){
-         if(usedNums[calledNums[i]]){
-            if(calledNums[i] == document.getElementById("square0").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square1").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square5").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square6").innerHTML){count++;}
-         }
+         if(calledNums[i] == document.getElementById("square0").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square1").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square5").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square6").innerHTML){count++;}
       }
-      if(count == 4){$("#postageStampWin1").show();}
+      for(var i = 0; i < calledNums.length; i++){
+         if(calledNums[i] == document.getElementById("square3").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square4").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square8").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square9").innerHTML){count++;}
+      }
+      for(var i = 0; i < calledNums.length; i++){
+         if(calledNums[i] == document.getElementById("square14").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square15").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square19").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square20").innerHTML){count++;}
+      }for(var i = 0; i < calledNums.length; i++){
+         if(calledNums[i] == document.getElementById("square17").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square18").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square20").innerHTML){count++;}
+         if(calledNums[i] == document.getElementById("square23").innerHTML){count++;}
+      }
+      if(count == 4){
+         $("#postageStampWin1").show();
+         socket.emit("postageStampWin", $("#username").val(), 20);
+      }
       else{$("#notFinishedPostageStamp").show();}    
-   })
-
-   $("#postageStamp2").click(function(){
-      var count = 0;
-      for(var i = 0; i < calledNums.length; i++){
-         if(usedNums[calledNums[i]]){
-            if(calledNums[i] == document.getElementById("square3").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square4").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square8").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square9").innerHTML){count++;}
-         }
-      }
-      if(count == 4){$("#postageStampWin2").show();}
-      else{$("#notFinishedPostageStamp2").show();}
-   })
-   $("#postageStamp3").click(function(){
-      var count = 0;
-      for(var i = 0; i < calledNums.length; i++){
-         if(usedNums[calledNums[i]]){
-            if(calledNums[i] == document.getElementById("square14").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square15").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square19").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square20").innerHTML){count++;}
-         }
-      }
-      if(count == 4){$("#postageStampWin3").show();}
-      else{$("#notFinishedPostageStamp3").show();}    
-   })    
-
-
- /*        else if(usedNums[calledNums[i]]){
-            if(calledNums[i] == document.getElementById("square3").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square4").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square8").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square9").innerHTML){
-               count++;
-            }
-         }
-         else if(usedNums[calledNums[i]]){
-            if(calledNums[i] == document.getElementById("square14").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square15").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square19").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square20").innerHTML){
-               count++;
-            }
-         }
-         else if(usedNums[calledNums[i]]){
-            if(calledNums[i] == document.getElementById("square17").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square18").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square22").innerHTML){
-               count++;
-            }
-            else if(calledNums[i] == document.getElementById("square23").innerHTML){
-               count++;
-            }
-         }
-      }*/
-   $("#fourCorners").click(function(){
-      var count = 0;
-      for(var i = 0; i < calledNums.length; i++){
-         if(usedNums[calledNums[i]]){
-            if(calledNums[i] == document.getElementById("square0").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square19").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square23").innerHTML){count++;}
-            else if(calledNums[i] == document.getElementById("square4").innerHTML){count++;}
-         }
-      }
-      if(count == 4){$("#fourCornerWin").show();}
-      else{$("#notFinished4Corners").show();}    
-   })
+   });
 
    $("#line").click(function(){
-      var count = 0;
+      var count1 = 0 , count2 = 0, count3 = 0, count4 = 0, count5 = 0;
       for(var i = 0; i < usedNums.length; i ++){
-         if(usedNums[i]==document.getElementById("square0").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square1").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square2").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square3").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square4").innerHTML) count++;
+         //console.log("num: "+usedNums[i]);
+         if(calledNums[i]==document.getElementById("square0").innerHTML) count1++;
+         if(calledNums[i]==document.getElementById("square1").innerHTML) count1++;
+         if(calledNums[i]==document.getElementById("square2").innerHTML) count1++;
+         if(calledNums[i]==document.getElementById("square3").innerHTML) count1++;
+         if(calledNums[i]==document.getElementById("square4").innerHTML) count1++;
+      
+         if(calledNums[i]==document.getElementById("square5").innerHTML) count2++;
+         if(calledNums[i]==document.getElementById("square6").innerHTML) count2++;
+         if(calledNums[i]==document.getElementById("square7").innerHTML) count2++;
+         if(calledNums[i]==document.getElementById("square8").innerHTML) count2++;
+         if(calledNums[i]==document.getElementById("square9").innerHTML) count2++;
+      
+         if(calledNums[i]==document.getElementById("square10").innerHTML) count3++;
+         if(calledNums[i]==document.getElementById("square11").innerHTML) count3++;
+         if(calledNums[i]==document.getElementById("square12").innerHTML) count3++;
+         if(calledNums[i]==document.getElementById("square13").innerHTML) count3++;
+      
+         if(calledNums[i]==document.getElementById("square14").innerHTML) count4++;
+         if(calledNums[i]==document.getElementById("square15").innerHTML) count4++;
+         if(calledNums[i]==document.getElementById("square16").innerHTML) count4++;
+         if(calledNums[i]==document.getElementById("square17").innerHTML) count4++;
+         if(calledNums[i]==document.getElementById("square18").innerHTML) count4++;
+     
+         if(calledNums[i]==document.getElementById("square19").innerHTML) count5++;
+         if(calledNums[i]==document.getElementById("square20").innerHTML) count5++;
+         if(calledNums[i]==document.getElementById("square21").innerHTML) count5++;
+         if(calledNums[i]==document.getElementById("square22").innerHTML) count5++;
+         if(calledNums[i]==document.getElementById("square23").innerHTML) count5++;
       }
-
-      for(var i = 0; i < usedNums.length; i ++){
-         if(usedNums[i]==document.getElementById("square5").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square6").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square7").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square8").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square9").innerHTML) count++;
-      }
-
-      for(var i = 0; i < usedNums.length; i ++){
-         if(usedNums[i]==document.getElementById("square10").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square11").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square12").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square13").innerHTML) count++;
-      }
-
-      for(var i = 0; i < usedNums.length; i ++){
-         if(usedNums[i]==document.getElementById("square14").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square15").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square16").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square17").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square18").innerHTML) count++;
-      }
-
-      for(var i = 0; i < usedNums.length; i ++){
-         if(usedNums[i]==document.getElementById("square19").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square20").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square21").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square22").innerHTML) count++;
-         if(usedNums[i]==document.getElementById("square23").innerHTML) count++;
-      }
-
-      if(count == 4){
+      
+      if(count1==5||count2==5||count3==4||count4==5||count5==5){
          console.log("you got a line");
          $("#linewin").show();
+         socket.emit("linesWin", $("#username").val(), 25);
       }
       else{
          console.log("You dont have a line");
          $("#notline").show();
       }
-   })
-
-   $("#seeLeaderboard").click(function(){
-      $("#container").show();
-      $("#Login").hide();
-      $("#register").hide();
-      $("#seeLeaderboard").hide();
-   })
+   });
 
 }
 
 function getRandNumDisplayed(){
    //trying to make the random number generator work from teh server side once the play button is clicked
    $("#play").click(function(){
-      socket.emit("startPlaying");
+      $("#playButton").hide();
       $("#numberGenerator").show();
-      $("#play").hide();
       var bingo = {
          selectedNumbers: [],
          generateRandom: function() {
@@ -296,7 +288,6 @@ function getRandNumDisplayed(){
             return random;
          }
       };
-      
       $('.numbersTable td').each(function() {
          var concatClass = this.cellIndex + "" + this.parentNode.rowIndex;
          var numberString = parseInt(concatClass, 10).toString();
@@ -305,78 +296,97 @@ function getRandNumDisplayed(){
       
       
       $('#btnGenerate').click(function() {
-      //while(bingo.selectedNumbers.length <= 79){   
-         var random = bingo.generateNextRandom().toString();
-         //console.log(random);
-         calledNums.push(random);
-         $('.bigNumberDisplay span').text(random);
-         $('.numbersTable td.cell' + random).addClass('selected');
-         //sleep(1000);
-      //}
+         setInterval(function(){
+            var random = bingo.generateNextRandom().toString();
+            console.log(random);
+            calledNums.push(random);
+            $('.bigNumberDisplay span').text(random);
+            $('.numbersTable td.cell' + random).addClass('selected');
+         }, 3000);  
       });
    });
 }
-function changeColor(){
-   $(document).on("click","#mytable tbody td", function(e){
-      if($(this).css("background-color", color) == color[0]){
-         $(this).css("background-color", color[1]);
-      }
-      else if($(this).css("background-color",color) == color[1]){
-         $(this).css("background-color", color[0]);
-      }
-   });
+
+function makeCard(i){
+	console.log("creating card " + i);
+   //var c = "<table><thead><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr></thead><tbody><tr><td id=\"square0\">&nbsp;</td><td id=\"square1\">&nbsp;</td><td id=\"square2\">&nbsp;</td><td id=\"square3\">&nbsp;</td><td id=\"square4\">&nbsp;</td></tr><tr><td id=\"square5\">&nbsp;</td><td id=\"square6\">&nbsp;</td><td id=\"square7\">&nbsp;</td><td id=\"square8\">&nbsp;</td><td id=\"square9\">&nbsp;</td></tr><tr><td id=\"square10\">&nbsp;</td><td id=\"square11\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square12\">&nbsp;</td><td id=\"square13\">&nbsp;</td></tr><tr><td id=\"square14\">&nbsp;</td><td id=\"square15\">&nbsp;</td><td id=\"square16\">&nbsp;</td><td id=\"square17\">&nbsp;</td><td id=\"square18\">&nbsp;</td></tr><tr><td id=\"square19\">&nbsp;</td><td id=\"square20\">&nbsp;</td><td id=\"square21\">&nbsp;</td><td id=\"square22\">&nbsp;</td><td id=\"square23\">&nbsp;</td></tr></tbody></table>"
+   var c = "<p>Card number "+i+"</p><table><thead><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr></thead><tbody><tr><td id=\"square"+increment(i,0)+"\">&nbsp;</td><td id=\"square"+increment(i,1)+"\">&nbsp;</td><td id=\"square"+increment(i,2)+"\">&nbsp;</td><td id=\"square"+increment(i,3)+"\">&nbsp;</td><td id=\"square"+increment(i,4)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(i,5)+"\">&nbsp;</td><td id=\"square"+increment(i,6)+"\">&nbsp;</td><td id=\"square"+increment(i,7)+"\">&nbsp;</td><td id=\"square"+increment(i,8)+"\">&nbsp;</td><td id=\"square"+increment(i,9)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(i,10)+"\">&nbsp;</td><td id=\"square"+increment(i,11)+"\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square"+increment(i,12)+"\">&nbsp;</td><td id=\"square"+increment(i,13)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(i,14)+"\">&nbsp;</td><td id=\"square"+increment(i,15)+"\">&nbsp;</td><td id=\"square"+increment(i,16)+"\">&nbsp;</td><td id=\"square"+increment(i,17)+"\">&nbsp;</td><td id=\"square"+increment(i,18)+"\">&nbsp;</td></tr><tr><td id=\"square"+increment(i,19)+"\">&nbsp;</td><td id=\"square"+increment(i,20)+"\">&nbsp;</td><td id=\"square"+increment(i,21)+"\">&nbsp;</td><td id=\"square"+increment(i,22)+"\">&nbsp;</td><td id=\"square"+increment(i,23)+"\">&nbsp;</td></tr></tbody></table>"
+	$("#mytable").append(c);
 }
-function sleep(delay) {
-    var start = new Date().getTime();
-    while (new Date().getTime() < start + delay);
+
+function increment(i, j){
+   console.log("i "+i);
+   
+   if(i == 1){
+      console.log("j "+j);
+      //console.log(typeof(j));
+      return j;
+   }
+      
+   if(i == 2){
+      console.log("j "+j);
+      return j + 24;
+   }
+   if(i == 3){
+      console.log("j "+j);
+      return j + 48;
+   }
+   if(i == 4){
+      console.log("j "+j);
+      return j + 72;
+   }
+   if(i == 5){
+      console.log("j "+j);
+      return j + 98;
+   }
 }
+
+function newCard() {
+   //console.log(Number($("#selection option:selected").val())*24);
+	for (var i=0; i<Number($("#selection option:selected").val())*24; i++) {
+	   setSquare(i);
+	}
+}
+
+function setSquare(thisSquare) {
+   var currSquare = "square" + thisSquare;
+   console.log("id: " + currSquare);
+	var colPlace = new Array(0,1,2,3,4,0,1,2,3,4,0,1,3,4,0,1,2,3,4,0,1,2,3,4);
+	var colBasis = colPlace[thisSquare%24] * 15;
+	var newNum;
+
+	do {
+	   newNum = colBasis + getNewNum() + 1;
+	   console.log("num: " + newNum + "colbasis: "+colBasis);
+	}
+	while (usedNums[newNum]);
+
+	usedNums[newNum] = true;
+	document.getElementById(currSquare). innerHTML = newNum;
+}
+
+function getNewNum() {
+	return Math.floor(Math.random() * 15);
+}
+function anotherCard() {
+	for (var i=1; i<usedNums.length; i++) {
+	   usedNums[i] = false;
+	}
+
+	newCard();
+	return false;
+}
+
 function clickHandler(){
    $(document).on("click","#mytable tbody td", function(e){
-      changeColor();
-      console.log($(this).css("background-color", color));
+      $(this).css("background-color", color);
       console.log(e.target.innerHTML);
    });
 }
-function makeCard(i){
-   var c = "<table class= \"bingoCard\"><thead><tr><th width=\"20%\">B</th><th width=\"20%\">I</th><th width=\"20%\">N</th><th width=\"20%\">G</th><th width=\"20%\">O</th></tr></thead><tbody><tr><td id=\"square0\">&nbsp;</td><td id=\"square1\">&nbsp;</td><td id=\"square2\">&nbsp;</td><td id=\"square3\">&nbsp;</td><td id=\"square4\">&nbsp;</td></tr><tr><td id=\"square5\">&nbsp;</td><td id=\"square6\">&nbsp;</td><td id=\"square7\">&nbsp;</td><td id=\"square8\">&nbsp;</td><td id=\"square9\">&nbsp;</td></tr><tr><td id=\"square10\">&nbsp;</td><td id=\"square11\">&nbsp;</td><td id=\"free\">Free</td><td id=\"square12\">&nbsp;</td><td id=\"square13\">&nbsp;</td></tr><tr><td id=\"square14\">&nbsp;</td><td id=\"square15\">&nbsp;</td><td id=\"square16\">&nbsp;</td><td id=\"square17\">&nbsp;</td><td id=\"square18\">&nbsp;</td></tr><tr><td id=\"square19\">&nbsp;</td><td id=\"square20\">&nbsp;</td><td id=\"square21\">&nbsp;</td><td id=\"square22\">&nbsp;</td><td id=\"square23\">&nbsp;</td></tr></tbody></table>"
-   $("#mytable").append(c);
-}
-//fix this
-function newCard(whichCard) {
-     for (var i=0; i<24; i++) {
-        setSquare(i);
-     }
-}
-//fix this
-function setSquare(thisSquare, whichCard) {
-     var currSquare = "square" + thisSquare;
-     var colPlace = new Array(0,1,2,3,4,0,1,2,3,4,0,1,3,4,0,1,2,3,4,0,1,2,3,4);
-     var colBasis = colPlace[thisSquare] * 15;
-     var newNum;
 
-     do {
-        newNum = colBasis + getNewNum() + 1;
-        //console.log(newNum);
-     }
-     while (usedNums[newNum]);
 
-     usedNums[newNum] = true;
-     document.getElementById(currSquare). innerHTML = newNum;
-}
-function getNewNum() {
-     return Math.floor(Math.random() * 15);
-}
-function anotherCard() {
-     for (var i=1; i<usedNums.length; i++) {
-        usedNums[i] = false;
-     }
 
-     newCard();
-     return false;
-}
 $(initAll);
 
-//new user gets 2000 money
-//every card costs 100 money
-//all of the money goes into the pool
+
 

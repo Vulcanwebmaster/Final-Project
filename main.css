@@ -161,14 +161,6 @@ th, td {
 #usernameLeaderboard, #winNumber, #lossNumber, #winRatio, #currentMoney{
     color: black;
 }
-
-/*
-.btn-group button {
-    display: block; //Make the buttons appear below each other
-    border: 5px outset #1C6EA4;
-}
-*/
-
 #bingoCard{
     text-align: center;
     padding-top: 10px;
@@ -209,7 +201,4 @@ th, td {
 	position:relative;
 	top:1px;
 }
-
-
-
 
