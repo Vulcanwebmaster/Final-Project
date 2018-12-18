@@ -8,7 +8,10 @@
      <script src="client.js" type="text/javascript" language="javascript"></script>
      
 </head>
-<body id="qwer">
+<body>
+    <div id="Leaderboard"hidden= "hidden">
+        <button id="Leaderboard1" style="float:right; top:0px">Leaderboard</button>
+    </div>
     <div id="Login">
         <h1>Login</h1>
         <form id="loginForm">
@@ -51,60 +54,38 @@
         <p id="listOfUsers"></p>
     </div>
     <div id="bingoCard" class="center" hidden="hidden">
-        <h3>Bingo Card</h3>
         <table id="mytable"></table>
     </div>
-    <div id="playButton" hidden="hidden">
+    <div id="playButton" class= "startPlaying" hidden="hidden">
         <button id="play">Start playing</button>
     </div>
-    <div>
-        <button id="bingo" hidden="hidden">Bingo!</button>
-        <p id="win" hidden="hidden">We have a winner, you won the game!</p>
-        <p id="keepplaying" hidden="hidden">You don't have a bingo yet... keep playing</p>
-        <button id="fourCorners" hidden ="hidden">Four Corners!</button>
-        <p id="fourCornerWin" hidden = "hidden">You have four corners completed!</p>
-        <p id="notFinished4Corners" hidden = "hidden"> Keep playing.</p>
-        <button id="line" hidden="hidden">Line!</button>
-        <p id="linewin" hidden="hidden">You have a line!</p>
-        <p id="notline" hidden="hidden">You don't have a line yet, keep playing</p>
+    
     <div id="notYet" hidden ="hidden" class="btn-group">
-        <button id="postageStamp1" hidden ="hidden">Top left postageStamp</button>
-        <p id="postageStampWin1" hidden = "hidden">You have top left postage Stamp completed!</p>
+        <button id="bingo" hidden="hidden">Bingo!</button>
+        <p id="keepplaying" hidden="hidden">You don't have a bingo yet... keep playing</p>
+        <p id="win" hidden="hidden">You have bingo! Congrats, you earned 500 coins</p>
+        <button id="line" hidden="hidden">Line!</button>
+        <p id="notline" hidden="hidden">You don't have a line yet, keep playing</p>
+        <p id="linewin" hidden="hidden">You got a line! Congrats, you earned 25 coins</p>
+        <button id="fourCorners" hidden ="hidden">Four Corners!</button>
+        <p id="notFinished4Corners" hidden = "hidden"> Keep playing.</p>
+        <p id="fourCornerWin" hidden="hidden">You got 4 corners! Congrats, you earned 20 coins</p>
+        <button id="postageStamp" hidden ="hidden">PostageStamp</button>
+        <p id="postageStampWin" hidden = "hidden">You have postage Stamp completed! Congrats, you earned 20 coins</p>
         <p id="notFinishedPostageStamp" hidden = "hidden"> Keep playing.</p>
-        <button id="postageStamp2" hidden ="hidden">Top right postageStamp</button>
-        <p id="postageStampWin2" hidden = "hidden">You have top right postage Stamp completed!</p>
-        <p id="notFinishedPostageStamp2" hidden = "hidden"> Keep playing.</p>
-        <button id="postageStamp3" hidden ="hidden">Buttom left postageStamp</button>
-        <p id="postageStampWin3" hidden = "hidden">You have buttom left postage Stamp completed!</p>
-        <p id="notFinishedPostageStamp3" hidden = "hidden"> Keep playing.</p>
-        <button id="postageStamp4" hidden ="hidden">buttom right postageStamp</button>
-        <p id="postageStampWin4" hidden = "hidden">You have buttom right postage Stamp completed!</p>
-        <p id="notFinishedPostageStamp4" hidden = "hidden"> Keep playing.</p>
+        
     </div>
-    </div>
-    <div id="container" hidden = "hidden">
-        <table>
-            <thead>
-                <tr>
-                    <th id= "usernameLeaderboard">Username:</th>
-                    <th id = "winNumber"># of Wins</th>
-                    <th id = "lossNumber"># of losses</th>
-                    <th id = "winRatio">Win ratio</th> 
-                    <th id = "currentMoney"> current Money</th>
-                </tr>
-            </thead>
-            <tbody id = "userList">
-            </tbody>
-        </table>
+    <div id="container">
+        <table id = "userDB"  hidden = "hidden">
+    </table>
+    <button id="goBack" hidden="hidden">Go back</button>
     </div>
     <div id="numberGenerator" hidden="hidden">
         
         <div class="bigNumberDisplay">
             <span>0</span>
         </div>
-        <div>
-            <input id="btnGenerate" type="button" value="Generate"/>
-        </div>
+        
     
         <br/>
         
