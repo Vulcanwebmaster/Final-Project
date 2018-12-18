@@ -19,7 +19,7 @@ var secureServer = https.createServer(options, app);
 var http = require("http");
 var insecureServer = http.createServer(app);
 var socketIo = require("socket.io");
-var io = socketIo(secureServer);
+var io = socketIo(insecureServer);
 var crypto = require('crypto');
 
 //This is to redirect traffic from port 80 (insecure) to port 443 (secure)
@@ -27,8 +27,8 @@ app.use(function(req, res, next) {
     if (req.secure) {
         next();
     } else {
-        //next();
-        res.redirect('https://' + req.headers.host + req.url);
+        next();
+//        res.redirect('https://' + req.headers.host + req.url);
     }
 });
 
@@ -57,6 +57,7 @@ io.on("connection", function(socket){
 		io.emit("updateUsers", getUserNames());
 	});
 
+	//checking if the user is in the database for registering a new user
 	socket.on("checkUser", function(username, callbackFunction){
 		db.collection("bingoInfo").find({username: username}, {$exists:true}).toArray(function(err,doc){
 			if(doc.length==0){
@@ -72,6 +73,7 @@ io.on("connection", function(socket){
 		
 	});
 
+	//checking if the username exists in the database to log in a user
 	socket.on("checkUsername", function(username, goodUsername){
 		db.collection("bingoInfo").find({username: username}, {$exists:true}).toArray(function(err,doc){
 			if(doc.length==0){
@@ -84,6 +86,7 @@ io.on("connection", function(socket){
 		});
 	});
 
+	//checking if the username and password matches for a given username
 	socket.on("setUsername", function(user, pass, callbackFunction){
 		var pass_hash=crypto.createHash('md5').update(pass).digest('hex');
 		db.collection("bingoInfo").find({username: user}).toArray(function(err,doc){
@@ -102,6 +105,7 @@ io.on("connection", function(socket){
 		});
 	});
 
+	//adding the user to the db
 	socket.on("addUser", function(username, password, wins, losses, money){
 		var hash_password=crypto.createHash('md5').update(password).digest('hex');
 		console.log("addUser was called with " + username + " " + password);
@@ -111,11 +115,11 @@ io.on("connection", function(socket){
 
 	io.emit("updateUsers", getUserNames());
 	
+	//creating the leaderboard table
 	socket.on("fillTable", function(success){
-		db.collection("bingoInfo").find().sort( { money: -1 } ).toArray(function(err, doc){
+		db.collection("bingoInfo").find().sort( { wins: -1 } ).toArray(function(err, doc){
 			if(doc!=null){
 				success(true);
-				console.log(doc);
 				for(var i = 0; i < doc.length; i++){
 					socket.emit("getContents", doc[i].username, doc[i].wins, doc[i].money)
 				}
@@ -127,16 +131,16 @@ io.on("connection", function(socket){
 		});
 	});
 
+	//sending a message to the client according to if it has enough money to purchase bingo cards so it can create 
+	//as many cards as it needs
 	socket.on("getCards", function(numCards, callbackFunction){
-		
 		var money;
 		db.collection("bingoInfo").find({ username: nameForSocket[socket.id] }).toArray(function(err,docs) {
 			if(docs.length>0){
 				money=docs[0].money;
 			}
 			else console.log(err);
-			if(200 * numCards > money){
-				//TO-DO: write error message on the screen
+			if(50 * numCards > money){
 				console.log("not enough money to buy that many cards");
 				callbackFunction(false);
 			}
@@ -149,6 +153,7 @@ io.on("connection", function(socket){
 		});
 	});
 
+	//generating a random number every second for the actual bingo game
 	socket.on("getRandomNumber", function(){
 		var bingo = {
 			selectedNumbers: [],
@@ -175,23 +180,22 @@ io.on("connection", function(socket){
 			var random = bingo.generateNextRandom().toString();
 			console.log(random);
 			io.emit("numberGenerator", random);
-		}, 2000);  
+		}, 1000);  
 	});
 
-	//socket.on("endGame", function(){
-
-	//});
-	socket.on("bingoWin", function(username, moneyWon){
+	//when the user sends the message bingoWin we update the money and the wins of the user
+	socket.on("bingoWin", function(username, moneyWon, winNum){
 		db.collection("bingoInfo").find({username: username}).toArray(function(err, doc){
 			if(doc.length!=0){
 				console.log(doc[0].wins);
 				db.collection("bingoInfo").updateOne({username: username}, {$set: {money: doc[0].money+moneyWon}});
-				db.collection("bingoInfo").updateOne({username: username}, {$set:{wins:doc[0].wins+1}});
+				db.collection("bingoInfo").updateOne({username: username}, {$set:{wins:doc[0].wins+winNum}});
 			}
 			else console.log(err);
 		});
 	});
 
+	//any time the user has a line, corners or postage stamp we update the current money of the user
 	socket.on("moneyWin", function(username, moneyWon){
 		db.collection("bingoInfo").find({username: username}).toArray(function(err, doc){
 			if(doc.length!=0){
@@ -208,7 +212,7 @@ client.connect(function(err){
 	if(err != null) throw err;
 	else {
 		db = client.db("bingoInfo");
-		secureServer.listen(443, function() {console.log("Secure server is ready.");});
+		//secureServer.listen(443, function() {console.log("Secure server is ready.");});
 		insecureServer.listen(80, function() {console.log("Insecure (forwarding) server is ready.");});
 	}
 });
